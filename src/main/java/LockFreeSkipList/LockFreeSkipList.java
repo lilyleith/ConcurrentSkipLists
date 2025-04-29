@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicMarkableReference;
  */
 
 public class LockFreeSkipList<T> {
-    static final int MAX_LEVEL = 10;
+    static final int MAX_LEVEL = 5;
     final Node<T> head = new Node<T>(Integer.MIN_VALUE);
     final Node<T> tail = new Node<T>(Integer.MAX_VALUE);
     private final Random random = new Random();
@@ -146,6 +146,38 @@ public class LockFreeSkipList<T> {
         }
         return (curr.key == v);
     }
+
+    public void drawList() {
+        System.out.println("Current Skip List Structure:");
+        for (int level = MAX_LEVEL; level >= 0; level--) {
+            StringBuilder line = new StringBuilder("L" + level + ": ");
+            Node<T> curr = head;
+            while (curr != null) {
+                Node<T> next = curr.next[level].getReference();
+                boolean[] marked = {false};
+                curr.next[level].get(marked);
+                if (marked[0]) {
+                    // Skip logically removed nodes
+                    curr = next;
+                    continue;
+                }
+                // Display current node
+                if (curr == head) {
+                    line.append("HEAD");
+                } else if (curr == tail) {
+                    line.append(" -> TAIL");
+                    break;
+                } else {
+                    if (curr.value != null) {
+                        line.append(String.format(" -> [%s]", curr.value.toString()));
+                    }
+                }
+                curr = next;
+            }
+            System.out.println(line.toString());
+        }
+    }
+
 
 
     int randomLevel() {
