@@ -2,6 +2,12 @@ package LockingSkipList;
 
 import java.util.Random;
 
+/**
+ * LazySkipList.java
+ * Author: skeleton code from the Art of Multiprocessor Programming,
+ * Edited by Lily Leith lleit@uic.edu for UIC CS454 Graduate Project
+ */
+
 public class LazySkipList {
     static final int MAX_LEVEL = 5;
     final Node<String> head = new Node<>(Integer.MIN_VALUE);

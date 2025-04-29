@@ -3,6 +3,12 @@ package LockingSkipList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * LockingSkipList/Node.java
+ * Author: skeleton code from the Art of Multiprocessor Programming,
+ * Edited by Lily Leith lleit@uic.edu for UIC CS454 Graduate Project
+ */
+
 public class Node<T> {
     final Lock lock = new ReentrantLock();
     final T item;
