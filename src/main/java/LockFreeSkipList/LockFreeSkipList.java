@@ -21,7 +21,7 @@ public class LockFreeSkipList<T> {
         }
     }
 
-    boolean add(T x) {
+    public boolean add(T x) {
         int topLevel = randomLevel();
         int bottomLevel = 0;
         Node<T>[] predecessors = (Node<T>[]) new Node[MAX_LEVEL + 1];
@@ -57,7 +57,7 @@ public class LockFreeSkipList<T> {
         }
     }
 
-    boolean remove(T x) {
+    public boolean remove(T x) {
         int bottomLevel = 0;
         Node<T>[] predecessors = (Node<T>[]) new Node[MAX_LEVEL + 1];
         Node<T>[] successors = (Node<T>[]) new Node[MAX_LEVEL + 1];
@@ -91,7 +91,7 @@ public class LockFreeSkipList<T> {
         }
     }
 
-    boolean find(T x, Node<T>[] predecessors, Node<T>[] successors) {
+    public boolean find(T x, Node<T>[] predecessors, Node<T>[] successors) {
         int bottomLevel = 0;
         int key = x.hashCode();
         boolean[] marked = {false};
@@ -123,7 +123,7 @@ public class LockFreeSkipList<T> {
         }
     }
 
-    boolean contains(T x) {
+    public boolean contains(T x) {
         int bottomLevel = 0;
         int v = x.hashCode();
         boolean[] marked = {false};
