@@ -9,7 +9,7 @@ public class SingleThreadedTest {
 
     @Test
     void testSingleThreadedAdd() {
-        LockFreeSkipList<String> lockFreeSkipList = new LockFreeSkipList<String>();
+        LockFreeSkipList<String> lockFreeSkipList = new LockFreeSkipList<String>(10);
         String[] names = new String[] {"A", "B", "C", "D", "E", "F", "G", "H"};
         for (String name : names) {
             lockFreeSkipList.add(name);
@@ -21,7 +21,7 @@ public class SingleThreadedTest {
 
     @Test
     void testSingleThreadedRemove() {
-        LockFreeSkipList<String> lockFreeSkipList = new LockFreeSkipList<String>();
+        LockFreeSkipList<String> lockFreeSkipList = new LockFreeSkipList<String>(10);
         String[] names = new String[] {"A", "B", "C", "D", "E", "F", "G", "H"};
         for (String name : names) {
             lockFreeSkipList.add(name);

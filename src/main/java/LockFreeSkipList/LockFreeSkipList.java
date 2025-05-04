@@ -1,5 +1,6 @@
 package LockFreeSkipList;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 
@@ -10,12 +11,16 @@ import java.util.concurrent.atomic.AtomicMarkableReference;
  */
 
 public class LockFreeSkipList<T> {
-    static final int MAX_LEVEL = 5;
-    final Node<T> head = new Node<T>(Integer.MIN_VALUE);
-    final Node<T> tail = new Node<T>(Integer.MAX_VALUE);
+    static int MAX_LEVEL;
+    final Node<T> head;
+    final Node<T> tail;
     private final Random random = new Random();
     static final double P = 0.5;
-    public LockFreeSkipList() {
+
+    public LockFreeSkipList(int maxLevel) {
+        MAX_LEVEL = maxLevel;
+        head = new Node<T>(Integer.MIN_VALUE);
+        tail = new Node<T>(Integer.MAX_VALUE);
         for (int i = 0; i < head.next.length; i++) {
             head.next[i] = new AtomicMarkableReference<Node<T>>(tail, false);
         }
@@ -30,18 +35,18 @@ public class LockFreeSkipList<T> {
             boolean found = find(x, predecessors, successors);
             if (found) {
                 return false;
-                } else {
+            } else {
                 Node<T> newNode = new Node(x, topLevel);
                 for (int level = bottomLevel; level <= topLevel; level++) {
                     Node<T> succ = successors[level];
                     newNode.next[level].set(succ, false);
-                    }
+                }
                 Node<T> pred = predecessors[bottomLevel];
                 Node<T> succ = successors[bottomLevel];
                 newNode.next[bottomLevel].set(succ, false);
                 if (!pred.next[bottomLevel].compareAndSet(succ, newNode,  false, false)) {
                     continue;
-                    }
+                }
                 for (int level = bottomLevel+1; level <= topLevel; level++) {
                     while (true) {
                         pred = predecessors[level];
@@ -66,7 +71,7 @@ public class LockFreeSkipList<T> {
             boolean found = find(x, predecessors, successors);
             if (!found) {
                 return false;
-                } else {
+            } else {
                 Node<T> nodeToRemove = successors[bottomLevel];
                 for (int level = nodeToRemove.topLevel; level >= bottomLevel+1; level--) {
                     boolean[] marked = {false};
@@ -74,8 +79,8 @@ public class LockFreeSkipList<T> {
                     while (!marked[0]) {
                         nodeToRemove.next[level].attemptMark(succ, true);
                         succ = nodeToRemove.next[level].get(marked);
-                        }
                     }
+                }
                 boolean[] marked = {false};
                 succ = nodeToRemove.next[bottomLevel].get(marked);
                 while (true) {
@@ -112,10 +117,10 @@ public class LockFreeSkipList<T> {
                         }
                     if (curr.key < key){
                         pred = curr; curr = succ;
-                        } else {
+                    } else {
                         break;
-                        }
                     }
+                }
                 predecessors[level] = pred;
                 successors[level] = curr;
             }
@@ -148,28 +153,26 @@ public class LockFreeSkipList<T> {
     }
 
     public void drawList() {
-        System.out.println("Current Skip List Structure:");
         for (int level = MAX_LEVEL; level >= 0; level--) {
             StringBuilder line = new StringBuilder("L" + level + ": ");
             Node<T> curr = head;
             while (curr != null) {
                 Node<T> next = curr.next[level].getReference();
                 boolean[] marked = {false};
-                curr.next[level].get(marked);
-                if (marked[0]) {
-                    // Skip logically removed nodes
-                    curr = next;
-                    continue;
-                }
                 // Display current node
                 if (curr == head) {
-                    line.append("HEAD");
+                    line.append("0 | HEAD");
                 } else if (curr == tail) {
-                    line.append(" -> TAIL");
+                    line.append(" -> 0 | TAIL");
                     break;
                 } else {
                     if (curr.value != null) {
-                        line.append(String.format(" -> [%s]", curr.value.toString()));
+                        curr.next[level].get(marked);
+                        int mark = 0;
+                        if (marked[0]) {
+                            mark = 1;
+                        }
+                        line.append(String.format(" -> %d | %s", mark, curr.value.toString()));
                     }
                 }
                 curr = next;

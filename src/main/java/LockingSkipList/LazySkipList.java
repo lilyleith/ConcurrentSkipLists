@@ -8,10 +8,10 @@ import java.util.Random;
  * Edited by Lily Leith lleit@uic.edu for UIC CS454 Graduate Project
  */
 
-public class LazySkipList {
-    static final int MAX_LEVEL = 5;
-    final Node<String> head = new Node<>(Integer.MIN_VALUE);
-    final Node<String> tail = new Node<>(Integer.MAX_VALUE);
+public class LazySkipList<T> {
+    static final int MAX_LEVEL = 100;
+    final Node<T> head = new Node<>(Integer.MIN_VALUE);
+    final Node<T> tail = new Node<>(Integer.MAX_VALUE);
     private final Random random = new Random();
     static final double P = 0.5;
 
@@ -21,14 +21,15 @@ public class LazySkipList {
         }
     }
 
-    int find(String name, Node<String>[] predecessors, Node<String>[] successors) {
+    public int find(T name, Node<T>[] predecessors, Node<T>[] successors) {
         int key = name.hashCode();
         int lFound = -1;
-        Node<String> pred = head;
+        Node<T> pred = head;
         for (int level = MAX_LEVEL; level >= 0; level--) {
-            Node<String> curr = pred.next[level];
+            Node<T> curr = pred.next[level];
             while (key > curr.key) {
-                pred = curr; curr = pred.next[level];
+                pred = curr;
+                curr = pred.next[level];
             }
             if (lFound == -1 && key == curr.key) {
                 lFound = level;
@@ -39,14 +40,14 @@ public class LazySkipList {
         return lFound;
     }
 
-    boolean add(String name) {
+    public boolean add(T name) {
         int topLevel = randomLevel();
-        Node<String>[] predecessors = (Node<String>[]) new Node[MAX_LEVEL + 1];
-        Node<String>[] successors = (Node<String>[]) new Node[MAX_LEVEL + 1];
+        Node<T>[] predecessors = (Node<T>[]) new Node[MAX_LEVEL + 1];
+        Node<T>[] successors = (Node<T>[]) new Node[MAX_LEVEL + 1];
         while (true) {
             int lFound = find(name, predecessors, successors);
             if (lFound != -1) {
-                Node<String> nodeFound = successors[lFound];
+                Node<T> nodeFound = successors[lFound];
                 if (!nodeFound.markedForRemoval) {
                     while (!nodeFound.fullyLinked) {}
                     return false;
@@ -55,8 +56,8 @@ public class LazySkipList {
             }
             int highestLocked = -1;
             try {
-                Node<String> pred;
-                Node<String> succ;
+                Node<T> pred;
+                Node<T> succ;
                 boolean valid = true;
                 for (int level = 0; valid && (level <= topLevel); level++) {
                     pred = predecessors[level];
@@ -66,7 +67,7 @@ public class LazySkipList {
                     valid = !pred.markedForRemoval && !succ.markedForRemoval && pred.next[level]==succ;
                 }
                 if (!valid) continue;
-                Node<String> newNode = new Node<>(name, topLevel);
+                Node<T> newNode = new Node<>(name, topLevel);
                 for (int level = 0; level <= topLevel; level++) {
                     newNode.next[level] = successors[level];
                 }
@@ -83,10 +84,12 @@ public class LazySkipList {
         }
     }
 
-    boolean remove(String name) {
-        Node<String> victim = null; boolean isMarked = false; int topLevel = -1;
-        Node<String>[] predecessors = (Node<String>[]) new Node[MAX_LEVEL + 1];
-        Node<String>[] successors = (Node<String>[]) new Node[MAX_LEVEL + 1];
+    public boolean remove(T name) {
+        Node<T> victim = null;
+        boolean isMarked = false;
+        int topLevel = -1;
+        Node<T>[] predecessors = (Node<T>[]) new Node[MAX_LEVEL + 1];
+        Node<T>[] successors = (Node<T>[]) new Node[MAX_LEVEL + 1];
         while (true) {
             int lFound = find(name, predecessors, successors);
             if (lFound != -1) victim = successors[lFound];
@@ -103,7 +106,7 @@ public class LazySkipList {
                 }
                 int highestLocked = -1;
                 try {
-                    Node<String> pred, succ; boolean valid = true;
+                    Node<T> pred, succ; boolean valid = true;
                     for (int level = 0; valid && (level <= topLevel); level++) {
                         pred = predecessors[level];
                         pred.lock.lock();
@@ -126,14 +129,14 @@ public class LazySkipList {
         }
     }
 
-    boolean contains(String name) {
-        Node<String>[] predecessors = (Node<String>[]) new Node[MAX_LEVEL + 1];
-        Node<String>[] successors = (Node<String>[]) new Node[MAX_LEVEL + 1];
+    public boolean contains(T name) {
+        Node<T>[] predecessors = (Node<T>[]) new Node[MAX_LEVEL + 1];
+        Node<T>[] successors = (Node<T>[]) new Node[MAX_LEVEL + 1];
         int lFound = find(name, predecessors, successors);
         return (lFound != -1 && successors[lFound].fullyLinked && !successors[lFound].markedForRemoval);
     }
 
-    int randomLevel() {
+    private int randomLevel() {
         int level = 0;
         while (level < MAX_LEVEL && random.nextDouble() < P) {
             level++;

@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicMarkableReference;
 
 import static LockFreeSkipList.LockFreeSkipList.MAX_LEVEL;
 
+
 /**
  * LockFreeSkipList/Node.java
  * Author: skeleton code from the Art of Multiprocessor Programming,
@@ -15,11 +16,12 @@ public class Node<T> {
     final int key;
     final AtomicMarkableReference<Node<T>>[] next;
     public final int topLevel;
-// constructor for sentinel nodes
+
+    // constructor for the sentinel nodes
     public Node(int key) {
-        value = null;
+        this.value = null;
         this.key = key;
-        next = (AtomicMarkableReference<Node<T>>[]) new AtomicMarkableReference[MAX_LEVEL + 1];
+        this.next = (AtomicMarkableReference<Node<T>>[]) new AtomicMarkableReference[MAX_LEVEL + 1];
         for (int i = 0; i < next.length; i++) {
             next[i] = new AtomicMarkableReference<Node<T>>(null,false);
         }

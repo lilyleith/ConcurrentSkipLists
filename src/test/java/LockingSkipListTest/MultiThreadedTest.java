@@ -1,5 +1,5 @@
-package LockFreeSkipListTest;
-import LockFreeSkipList.LockFreeSkipList;
+package LockingSkipListTest;
+import LockingSkipList.LazySkipList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ public class MultiThreadedTest {
 
     @Test
     public void testAdd() {
-        LockFreeSkipList<Integer> skipList = new LockFreeSkipList<Integer>(20);
+        LazySkipList<Integer> skipList = new LazySkipList<>();
         int numThreads = 100;
         int perThread = 10000;
         Thread[] threads = new Thread[numThreads];
@@ -39,7 +39,7 @@ public class MultiThreadedTest {
 
     @Test
     public void testRemove() {
-        LockFreeSkipList<Integer> skipList = new LockFreeSkipList<Integer>(100);
+        LazySkipList<Integer> skipList = new LazySkipList<>();
 
         int totalElements = 1000;
         List<Integer> initialValues = new ArrayList<>();

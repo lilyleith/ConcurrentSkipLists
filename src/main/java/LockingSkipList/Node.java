@@ -14,7 +14,7 @@ public class Node<T> {
     final T item;
     final int key;
     final Node<T>[] next;
-    final int MAX_LEVEL = 5;
+    final int MAX_LEVEL = 100;
 
     volatile boolean markedForRemoval = false;
     volatile boolean fullyLinked = false;
