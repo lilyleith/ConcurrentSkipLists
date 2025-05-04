@@ -1,5 +1,5 @@
-package LockingSkipList;
-
+package LockingSkipListTest;
+import LockingSkipList.LazySkipList;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,7 +8,7 @@ public class SingleThreadedTest {
 
     @Test
     void testSingleThreadedOperations() {
-        LazySkipList list = new LazySkipList();
+        LazySkipList<String> list = new LazySkipList();
 
         assertTrue(list.add("Alice"));
         assertTrue(list.contains("Alice"));
